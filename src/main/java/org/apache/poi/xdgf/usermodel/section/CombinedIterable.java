@@ -4,10 +4,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.Map.Entry;
-
-import org.apache.poi.xdgf.usermodel.section.geometry.GeometryRow;
 
 // iterates over the base and master
 public class CombinedIterable<T> implements Iterable<T> {

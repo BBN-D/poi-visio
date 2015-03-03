@@ -7,7 +7,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.poi.POIXMLException;
-import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.poi.xdgf.geom.SplineCollector;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
@@ -100,9 +99,6 @@ public class GeometrySection extends XDGFSection {
 				path.moveTo(parent.getBeginX(), parent.getBeginY());
 			}
 			
-			//System.out.println("Shape: " + parent);
-			//System.out.println("===");
-			
 			// dealing with splines makes this more complex
 			SplineCollector renderer = null;
 			GeometryRow row;
@@ -139,8 +135,6 @@ public class GeometrySection extends XDGFSection {
 			// just in case we end iteration
 			if (renderer != null)
 				renderer.addToPath(path, parent);
-			
-			//System.out.println("===");
 			
 			return path;
 		}

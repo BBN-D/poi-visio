@@ -25,17 +25,14 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.apache.poi.POIXMLException;
 import org.apache.poi.xdgf.geom.Dimension2dDouble;
 import org.apache.poi.xdgf.usermodel.XDGFPage;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
-import org.apache.poi.xdgf.usermodel.shape.ShapeDataAcceptor;
 import org.apache.poi.xdgf.usermodel.shape.ShapeRenderer;
 
 public class VsdxToPng {
