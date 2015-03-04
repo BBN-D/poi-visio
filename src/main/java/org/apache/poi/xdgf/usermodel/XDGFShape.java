@@ -1,5 +1,8 @@
 package org.apache.poi.xdgf.usermodel;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
@@ -141,7 +144,6 @@ public class XDGFShape extends XDGFSheet {
 		_txtHeight = XDGFCell.maybeGetDouble(_cells, "TxtHeight");
 		
 		_txtAngle = XDGFCell.maybeGetDouble(_cells, "TxtAngle");
-		
 	}
 	
 	/**
@@ -517,6 +519,66 @@ public class XDGFShape extends XDGFSheet {
     }
     
     @Override
+  	public Integer getLineCap() {
+  		
+      	Integer lineCap = super.getLineCap();
+  		if (lineCap != null)
+  			return lineCap;
+  		
+  		// get from master
+  		if (_masterShape != null) {
+  			return _masterShape.getLineCap();
+  		}
+  		
+  		// get default
+  		XDGFStyleSheet style = _document.getDefaultLineStyle();
+  		if (style != null)
+  			return style.getLineCap();
+  					
+  		return null;
+  	}
+    
+    @Override
+	public Color getLineColor() {
+		
+    	Color lineColor = super.getLineColor();
+		if (lineColor != null)
+			return lineColor;
+		
+		// get from master
+		if (_masterShape != null) {
+			return _masterShape.getLineColor();
+		}
+		
+		// get default
+		XDGFStyleSheet style = _document.getDefaultLineStyle();
+		if (style != null)
+			return style.getLineColor();
+					
+		return null;
+	}
+      
+    @Override
+	public Integer getLinePattern() {
+		
+    	Integer linePattern = super.getLinePattern();
+		if (linePattern != null)
+			return linePattern;
+		
+		// get from master
+		if (_masterShape != null) {
+			return _masterShape.getLinePattern();
+		}
+		
+		// get default
+		XDGFStyleSheet style = _document.getDefaultLineStyle();
+		if (style != null)
+			return style.getLinePattern();
+					
+		return null;
+	}
+    
+    @Override
 	public Double getLineWeight() {
 		
     	Double lineWeight = super.getLineWeight();
@@ -535,7 +597,26 @@ public class XDGFShape extends XDGFSheet {
 					
 		return null;
 	}
-	
+    
+    public Color getFontColor() {
+		
+    	Color fontColor = super.getFontColor();
+		if (fontColor != null)
+			return fontColor;
+		
+		// get from master
+		if (_masterShape != null) {
+			return _masterShape.getFontColor();
+		}
+		
+		// get default
+		XDGFStyleSheet style = _document.getDefaultTextStyle();
+		if (style != null)
+			return style.getFontColor();
+					
+		return null;
+	}
+    
 	public Double getFontSize() {
 		
 		Double fontSize = super.getFontSize();
@@ -553,7 +634,117 @@ public class XDGFShape extends XDGFSheet {
 			return style.getFontSize();
 					
 		return null;
+	}
+	
+	public Stroke getStroke() {
 		
+		float lineWeight = getLineWeight().floatValue();
+		int cap;
+		int join = BasicStroke.JOIN_MITER;
+		float miterlimit = 10.0f;
+		
+		switch (getLineCap()) {
+		case 0:
+			cap = BasicStroke.CAP_ROUND;
+			break;
+		case 1:
+			cap = BasicStroke.CAP_SQUARE;
+			break;
+		case 2:
+			cap = BasicStroke.CAP_BUTT; // TODO: what does extended mean?
+			break;
+		default:
+			throw new POIXMLException("Invalid line cap specified");
+		}
+		
+		float[] dash = null;
+		
+		// these line patterns are just approximations
+		switch (getLinePattern()) {
+		case 0: // transparent
+			break;
+		case 1: // solid
+			break;
+		case 2:
+			dash = new float[]{5,3};
+			break;
+		case 3:
+			dash = new float[]{1,4};
+			break;
+		case 4:
+			dash = new float[]{6,3,1,3};
+			break;
+		case 5:
+			dash = new float[]{6,3,1,3,1,3};
+			break;
+		case 6:
+			dash = new float[]{1,3,6,3,6,3};
+			break;
+		case 7:
+			dash = new float[]{15,3,6,3};
+			break;
+		case 8:
+			dash = new float[]{6,3,6,3};
+			break;
+		case 9:
+			dash = new float[]{3,2};
+			break;
+		case 10:
+			dash = new float[]{1,2};
+			break;
+		case 11:
+			dash = new float[]{3,2,1,2};
+			break;
+		case 12:
+			dash = new float[]{3,2,1,2,1};
+			break;
+		case 13:
+			dash = new float[]{1,2,3,2,3,2};
+			break;
+		case 14:
+			dash = new float[]{3,2,7,2};
+			break;
+		case 15:
+			dash = new float[]{7,2,3,2,3,2};
+			break;
+		case 16:
+			dash = new float[]{12,6};
+			break;
+		case 17:
+			dash = new float[]{1,6};
+			break;
+		case 18:
+			dash = new float[]{1,6,12,6};
+			break;
+		case 19:
+			dash = new float[]{1,6,1,6,12,6};
+			break;
+		case 20:
+			dash = new float[]{1,6,12,6,12,6};
+			break;
+		case 21:
+			dash = new float[]{30,6,12,6};
+			break;
+		case 22:
+			dash = new float[]{30,6,12,6,12,6};
+			break;
+		case 23:
+			dash = new float[]{1};
+			break;
+		case 254:
+			throw new POIXMLException("Unsupported line pattern value");
+		default:
+			throw new POIXMLException("Invalid line pattern value");
+		}
+		
+		// dashes are in units of line width
+		if (dash != null) {
+			for (int i = 0; i < dash.length; i++) {
+				dash[i] *= lineWeight;
+			}
+		}
+		
+		return new BasicStroke(lineWeight, cap, join, miterlimit, dash, 0);
 	}
 	
 	

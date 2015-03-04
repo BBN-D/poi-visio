@@ -37,6 +37,24 @@ public class XDGFCell {
 		return null;
 	}
 	
+	public static Integer maybeGetInteger(Map<String, XDGFCell> cells, String name) {
+		XDGFCell cell = cells.get(name);
+		if (cell != null)
+			return parseIntegerValue(cell._cell);
+		return null;
+	}
+	
+	public static String maybeGetString(Map<String, XDGFCell> cells, String name) {
+		XDGFCell cell = cells.get(name);
+		if (cell != null) {
+			String v = cell._cell.getV();
+			if (v.equals("Themed"))
+				return null;
+			return v;
+		}
+		return null;
+	}
+	
 	public static Double parseDoubleValue(CellType cell) {
 		try {
 			return Double.parseDouble(cell.getV());

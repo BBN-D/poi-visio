@@ -1,5 +1,6 @@
 package org.apache.poi.xdgf.usermodel.section;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import com.microsoft.schemas.office.visio.x2012.main.SectionType;
 public class CharacterSection extends XDGFSection {
 	
 	Double _fontSize = null;
+	Color _fontColor = null;
+	
 	Map<String, XDGFCell> _characterCells = new HashMap<>();
 	
 	public CharacterSection(SectionType section, XDGFSheet containingSheet) {
@@ -27,11 +30,19 @@ public class CharacterSection extends XDGFSection {
 		
 		if (row != null) {
 			_fontSize = XDGFCell.maybeGetDouble(_characterCells, "Size");
+			
+			String tmpColor = XDGFCell.maybeGetString(_characterCells, "Color");
+			if (tmpColor != null)
+				_fontColor = Color.decode(tmpColor);
 		}
 	}
 	
 	public Double getFontSize() {
 		return _fontSize;
+	}
+	
+	public Color getFontColor() {
+		return _fontColor;
 	}
 
 	@Override

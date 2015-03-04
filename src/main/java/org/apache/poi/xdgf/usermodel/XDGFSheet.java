@@ -1,5 +1,6 @@
 package org.apache.poi.xdgf.usermodel;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -104,6 +105,21 @@ public abstract class XDGFSheet {
 		return _document.getStyleById(_sheet.getTextStyle());
 	}
 	
+	public Color getFontColor() {
+		Color fontColor = null;
+		
+		if (_character != null) {
+			fontColor = _character.getFontColor();
+			if (fontColor != null)
+				return fontColor;
+		}
+		
+		XDGFStyleSheet style = getTextStyle();
+		if (style != null)
+			return style.getFontColor();
+		
+		return null;
+	}
 	
 	public Double getFontSize() {
 		Double fontSize = null;
@@ -120,7 +136,43 @@ public abstract class XDGFSheet {
 		
 		return null;
 	}
+	
+	public Integer getLineCap() {
+		Integer lineCap = XDGFCell.maybeGetInteger(_cells, "LineCap");
+		if (lineCap != null)
+			return lineCap;
+		
+		XDGFStyleSheet style = getLineStyle();
+		if (style != null)
+			return style.getLineCap();
+		
+		return null;
+	}
+	
+	public Color getLineColor() {
+		String lineColor = XDGFCell.maybeGetString(_cells, "LineColor");
+		if (lineColor != null)
+			return Color.decode(lineColor);
+		
+		XDGFStyleSheet style = getLineStyle();
+		if (style != null)
+			return style.getLineColor();
+		
+		return null;
+	}
 
+	public Integer getLinePattern() {
+		Integer linePattern = XDGFCell.maybeGetInteger(_cells, "LinePattern");
+		if (linePattern != null)
+			return linePattern;
+		
+		XDGFStyleSheet style = getLineStyle();
+		if (style != null)
+			return style.getLinePattern();
+		
+		return null;
+	}
+	
 	public Double getLineWeight() {
 		Double lineWeight = XDGFCell.maybeGetDouble(_cells, "LineWeight");
 		if (lineWeight != null)
@@ -131,5 +183,5 @@ public abstract class XDGFSheet {
 			return style.getLineWeight();
 		
 		return null;
-	}
+	}	
 }

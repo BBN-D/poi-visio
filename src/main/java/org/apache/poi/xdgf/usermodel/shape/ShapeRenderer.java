@@ -45,7 +45,11 @@ public class ShapeRenderer extends ShapeVisitor {
 	protected Path2D drawPath(XDGFShape shape) {
 		Path2D.Double path = shape.getPath();
 		if (path != null) {
-			_graphics.setStroke(new BasicStroke(shape.getLineWeight().floatValue()));
+			
+			// setup the stroke for this line
+			
+			_graphics.setColor(shape.getLineColor());
+			_graphics.setStroke(shape.getStroke());
 			_graphics.draw(path);
 		}
 		
@@ -61,9 +65,9 @@ public class ShapeRenderer extends ShapeVisitor {
 			
 			Font oldFont = _graphics.getFont();
 			
-			// TODO: setup font, color, font size?
-			
 			_graphics.setFont(oldFont.deriveFont(shape.getFontSize().floatValue()));
+			_graphics.setColor(shape.getFontColor());
+			
 			text.draw(_graphics);
 			_graphics.setFont(oldFont);
 		}
