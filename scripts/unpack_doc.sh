@@ -17,10 +17,10 @@ if [ -d "$OUTDIR" ]; then
     exit 1
 fi
 
-mkdir $OUTDIR
-unzip -d $OUTDIR $FILENAME
+mkdir "$OUTDIR"
+unzip -d "$OUTDIR" "$FILENAME"
 
-pushd $OUTDIR
+pushd "$OUTDIR"
 
 find . -type f \( -iname "*.xml" -or -iname "*.rels" \) -exec python -c "import os, sys, xml.dom.minidom
 with open('{}', 'r') as fp:
