@@ -6,6 +6,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.util.Internal;
@@ -70,6 +71,11 @@ public class XDGFText {
 		bounds.lineTo(0, 0);
 		
 		return bounds;
+	}
+	
+	// center of text in local coordinates
+	public Point2D.Double getTextCenter() {
+		return new Point2D.Double(_parent.getTxtLocPinX(), _parent.getTxtLocPinY());
 	}
 	
 	// assumes graphics is set properly to draw in the right style
