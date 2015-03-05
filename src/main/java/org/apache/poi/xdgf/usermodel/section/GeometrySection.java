@@ -94,11 +94,6 @@ public class GeometrySection extends XDGFSection {
 			// everything else is a path
 			Path2D.Double path = new Path2D.Double();
 			
-			// TODO: are coordinates relative to parent or parent's parent?
-			if (parent.isShape1D()) {
-				path.moveTo(parent.getBeginX(), parent.getBeginY());
-			}
-			
 			// dealing with splines makes this more complex
 			SplineCollector renderer = null;
 			GeometryRow row;
