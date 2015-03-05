@@ -1,5 +1,7 @@
 package org.apache.poi.xdgf.usermodel.section.geometry;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 
 import org.apache.poi.POIXMLException;
@@ -13,11 +15,19 @@ public class Ellipse implements GeometryRow {
 	
 	Ellipse _master = null;
 	
+	// x coordinate of center point
 	Double x = null;
+	// y coordinate of center point
 	Double y = null;
+	
+	// x coordinate of first point on ellipse
 	Double a = null;
+	// y coordinate of first point on ellipse
 	Double b = null;
+	
+	// x coordinate of second point on ellipse
 	Double c = null;
+	// y coordinate of second point on ellipse
 	Double d = null;
 	
 	Boolean deleted = null;
@@ -92,12 +102,34 @@ public class Ellipse implements GeometryRow {
 		
 		if (getDel()) return null;
 		
-		//throw new POIXMLException("Ellipse elements not implemented yet");
+		// intentionally shadowing variables here
+		double cx = getX(); // center
+		double cy = getY();
+		double a = getA(); // left
+		double b = getB();
+		double c = getC(); // top
+		double d = getD();
 		
-		//Ellipse2D.Double ellipse = new
-		return null;
+		// compute radius
+		double rx = Math.hypot(a - cx, b - cy);
+		double ry = Math.hypot(c - cx, d - cy);
 		
-		//Path2D.Double path = new 
+		// compute angle of ellipse
+		double angle = (2.0*Math.PI + (cy > b ? 1.0 : -1.0) * Math.acos((cx - a) / rx)) % (2.0*Math.PI);
+		
+		// create ellipse
+		Ellipse2D.Double ellipse = new Ellipse2D.Double(cx - rx,
+														cy - ry,
+														rx*2, ry*2);
+				
+		// create a path, rotate it about its center
+		Path2D.Double path = new Path2D.Double(ellipse);
+		
+		AffineTransform tr = new AffineTransform();
+		tr.rotate(angle, cx, cy);
+		path.transform(tr);
+		
+		return path;
 	}
 
 	@Override
