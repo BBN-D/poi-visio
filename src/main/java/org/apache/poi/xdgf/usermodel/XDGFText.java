@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.util.Internal;
@@ -51,6 +52,24 @@ public class XDGFText {
 		double y = txtPinY - txtLocPinY;
 		
 		return new Rectangle2D.Double(x, y, txtWidth, txtHeight);
+	}
+	
+	// returns bounds as a path in local coordinates
+	// -> useful if you need to transform to global coordinates
+	public Path2D.Double getBoundsAsPath() {
+		
+		Rectangle2D.Double rect = getTextBounds();
+		Double w = rect.getWidth();
+		Double h = rect.getHeight();
+		
+		Path2D.Double bounds = new Path2D.Double();
+		bounds.moveTo(0, 0);
+		bounds.lineTo(w, 0);
+		bounds.lineTo(w, h);
+		bounds.lineTo(0, h);
+		bounds.lineTo(0, 0);
+		
+		return bounds;
 	}
 	
 	// assumes graphics is set properly to draw in the right style
