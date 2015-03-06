@@ -1,6 +1,8 @@
 package org.apache.poi.xdgf.usermodel.section.geometry;
 
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
 import org.apache.poi.POIXMLException;
@@ -74,7 +76,7 @@ public class ArcTo implements GeometryRow {
 	}
 
 	@Override
-	public void addToPath(java.awt.geom.Path2D.Double path, XDGFShape parent) {
+	public void addToPath(Path2D.Double path, XDGFShape parent) {
 		
 		if (getDel()) return;
 		
@@ -85,36 +87,28 @@ public class ArcTo implements GeometryRow {
 		double y = getY();
 		double a = getA();
 		
+		if (a == 0) {
+			path.lineTo(x, y);
+			return;
+		}
+		
 		double x0 = last.getX();
 		double y0 = last.getY();
 		
-		/*// compute the center of the arc
-		double cx = (x0 - x) / 2.0;
-		double cy = (y0 - y) / 2.0;
+		double chordLength = Math.hypot(y - y0, x - x0);
+		double radius = (4 * a * a + chordLength * chordLength) / (8 * Math.abs(a));
 		
-		double rx = cx - a;
-		double ry = cy - a;
-		double rw = 2.0*a;
-		double rh = 2.0*a;
+		// center point
+		double cx = x0 + (x - x0) / 2.0;
+		double cy = y0 + (y - y0) / 2.0;
 		
-		double startAngle = Math.toDegrees(Math.atan2(y0 - cy, x0 - cx));
-		double endAngle = Math.toDegrees(Math.atan2(y - cy, x - cx));
+		double rotate = Math.atan2(y - cy, x - cx);
 		
-		Arc2D arc = new Arc2D.Double(rx, ry, -rw, rh,
-			 						 startAngle, endAngle, Arc2D.OPEN);
-			 
-		path.append(arc, true);
-		*/
+		Arc2D arc = new Arc2D.Double(x0, y0 - radius,
+									 chordLength, 2*radius,
+									 180, x0 < x ? 180 : -180,
+									 Arc2D.OPEN);
 		
-		double xs = Math.signum(x - x0);
-		if (xs == 0)
-			xs = 1;
-		
-		double ys = Math.signum(y - y0);
-		if (ys == 0)
-			ys = 1;
-		
-		path.lineTo(x0 + a*xs, y0 + a*ys);
-		path.lineTo(x, y);
+		path.append(AffineTransform.getRotateInstance(rotate, x0, y0).createTransformedShape(arc), true);
 	}
 }
