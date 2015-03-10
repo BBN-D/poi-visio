@@ -11,22 +11,27 @@ public class RelEllipticalArcTo implements GeometryRow {
 	
 	RelEllipticalArcTo _master = null;
 	
-	// The x-coordinate of the ending vertex on an arc relative to the width of the shape.
+	// The x-coordinate of the ending vertex on an arc relative to the width of
+	// the shape.
 	Double x = null;
-	
-	// The y-coordinate of the ending vertex on an arc relative to the height of the shape.
+
+	// The y-coordinate of the ending vertex on an arc relative to the height of
+	// the shape.
 	Double y = null;
-	
-	// The x-coordinate of the arc's control point relative to the shape’s width; a point on the arc. 
+
+	// The x-coordinate of the arc's control point relative to the shape’s
+	// width; a point on the arc.
 	Double a = null;
-	
+
 	// The y-coordinate of an arc's control point relative to the shape’s width.
 	Double b = null;
-	
+
 	// The angle of an arc's major axis relative to the x-axis of its parent.
 	Double c = null;
-	
-	// The ratio of an arc's major axis to its minor axis. Despite the usual meaning of these words, the "major" axis does not have to be greater than the "minor" axis, so this ratio does not have to be greater than 1.
+
+	// The ratio of an arc's major axis to its minor axis. Despite the usual
+	// meaning of these words, the "major" axis does not have to be greater than
+	// the "minor" axis, so this ratio does not have to be greater than 1.
 	Double d = null;
 	
 	Boolean deleted = null;
@@ -105,9 +110,15 @@ public class RelEllipticalArcTo implements GeometryRow {
 		double w = parent.getWidth();
 		double h = parent.getHeight();
 		
-		// XXX: This is totally wrong. But.. maybe it's close enough?
-		path.lineTo(getA()*w, getB()*h);
-		path.lineTo(getX()*w, getY()*h);
+		// intentionally shadowing variables here
+		double x = getX()*w;
+		double y = getY()*h;
+		double a = getA()*w;
+		double b = getB()*h;
+		double c = getC();
+		double d = getD();
+		
+		EllipticalArcTo.createEllipticalArc(x, y, a, b, c, d, path);
 		
 	}
 }

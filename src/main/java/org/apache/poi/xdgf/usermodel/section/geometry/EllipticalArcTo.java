@@ -1,5 +1,10 @@
 package org.apache.poi.xdgf.usermodel.section.geometry;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+
 import org.apache.poi.POIXMLException;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
@@ -105,20 +110,13 @@ public class EllipticalArcTo implements GeometryRow {
 	public void setupMaster(GeometryRow row) {
 		_master = (EllipticalArcTo) row;
 	}
+	
+	public static int draw = 0;
 
 	@Override
 	public void addToPath(java.awt.geom.Path2D.Double path, XDGFShape parent) {
 	
 		if (getDel()) return;
-		
-		// TODO: This is totally wrong. But.. maybe it's close enough?
-		path.lineTo(getA(), getB());
-		path.lineTo(getX(), getY());
-		
-		//path.quadTo(getA(), getB(), getX(), getY());
-		/*
-		
-		Point2D last = path.getCurrentPoint();
 		
 		// intentionally shadowing variables here
 		double x = getX();
@@ -128,30 +126,89 @@ public class EllipticalArcTo implements GeometryRow {
 		double c = getC();
 		double d = getD();
 		
+		createEllipticalArc(x, y, a, b, c, d, path);
+	}
+		
+	public static void createEllipticalArc(double x, double y, double a, double b,
+										   double c, double d,
+										   java.awt.geom.Path2D.Double path) {
+		
+		// Formula for center of ellipse by Junichi Yoda & nashwaan:
+		// -> From http://visguy.com/vgforum/index.php?topic=2464.0
+		//
+		// x1,y1 = start; x2,y2 = end; x3,y3 = control point
+		//
+		// x0 = ((x1-x2)*(x1+x2)*(y2-y3)-(x2-x3)*(x2+x3)*(y1-y2)+D^2*(y1-y2)*(y2-y3)*(y1-y3))/(2*((x1-x2)*(y2-y3)-(x2-x3)*(y1-y2)))
+		// y0 = ((x1-x2)*(x2-x3)*(x1-x3)/D^2+(x2-x3)*(y1-y2)*(y1+y2)-(x1-x2)*(y2-y3)*(y2+y3))/(2*((x2-x3)*(y1-y2)-(x1-x2)*(y2-y3)))
+		// radii along axis:   a = sqrt{ (x1-x0)^2 + (y1-y0)^2 * D^2 }
+		//
+		
+		Point2D last = path.getCurrentPoint();
 		double x0 = last.getX();
 		double y0 = last.getY();
 		
-		// determine the major axis
+		// translate all of the points to the same angle as the ellipse
+		AffineTransform at = AffineTransform.getRotateInstance(-c);
+		double[] pts = new double[]{x0, y0, x, y, a, b};
+		at.transform(pts, 0, pts, 0, 3);
 		
 		
-		// compute the center of the arc
-		// a, b is vaguely the center of the arc
-		//double cx = (x0 - x) / 2.0;
-		//double cy = (y0 - y) / 2.0;
+		x0 = pts[0]; y0 = pts[1];
+		x = pts[2]; y = pts[3];
+		a = pts[4]; b = pts[5];
 		
-		double rx = Math.max(Math.max(x0, a), x);
-		double ry = Math.max(Math.max(y0, b), y);
-		double rw = x0 - x;
-		double rh = y0 - y;
+		// nasty math time
 		
-		double startAngle = (180.0/Math.PI*Math.atan2(y0 - b, x0 - a));
-		double endAngle = (180.0/Math.PI*Math.atan2(y - b, x - a));
+		double d2 = d*d;
+		double cx = ((x0-x)*(x0+x)*(y-b)-(x-a)*(x+a)*(y0-y)+d2*(y0-y)*(y-b)*(y0-b))/(2.0*((x0-x)*(y-b)-(x-a)*(y0-y)));
+		double cy = ((x0-x)*(x-a)*(x0-a)/d2+(x-a)*(y0-y)*(y0+y)-(x0-x)*(y-b)*(y+b))/(2.0*((x-a)*(y0-y)-(x0-x)*(y-b)));
 		
-		Arc2D arc = new Arc2D.Double(rx, ry, rw, rh,
-			 						 startAngle, endAngle, Arc2D.OPEN);
+		// calculate radii of ellipse
+		double rx = Math.sqrt(Math.pow(x0-cx, 2) + Math.pow(y0-cy,2) * d2);
+		double ry = rx / d;
 		
-		path.append(arc, true);
+		// Arc2D requires us to draw an arc from one point to another, so we
+		// need to calculate the angle of the start point and end point along the ellipse
+		// - Derived from parametric form of ellipse: x = h + a*cos(t); y = k + b*sin(t) 
 		
-		*/
+		double ctrlAngle = Math.toDegrees(Math.atan2((b-cy)/ry, (a-cx)/rx));
+		double startAngle = Math.toDegrees(Math.atan2((y0-cy)/ry, (x0-cx)/rx));
+		double endAngle = Math.toDegrees(Math.atan2((y-cy)/ry, (x-cx)/rx));
+		
+		double sweep = computeSweep(startAngle, endAngle, ctrlAngle);
+		
+		// Now we have enough information to go on. Create the arc.
+		Arc2D arc = new Arc2D.Double(cx-rx, cy-ry,
+									 rx*2, ry*2, -startAngle, sweep, Arc2D.OPEN);
+		
+		// rotate the arc back to the original coordinate system
+		at.setToRotation(c);
+		path.append(at.createTransformedShape(arc), false);
+	}
+	
+	protected static double computeSweep(double startAngle, double endAngle, double ctrlAngle) {
+		double sweep;
+		
+		startAngle = (360.0 + startAngle) % 360.0;
+		endAngle = (360.0 + endAngle) % 360.0;
+		ctrlAngle = (360.0 + ctrlAngle) % 360.0;
+		
+		// different sweeps depending on where the control point is
+		
+		if (startAngle < endAngle) {
+			if (startAngle < ctrlAngle && ctrlAngle < endAngle) {
+				sweep = startAngle - endAngle;
+			} else {
+				sweep = 360 + (startAngle - endAngle);
+			}	
+		} else {
+			if (endAngle < ctrlAngle && ctrlAngle < startAngle) {
+				sweep = startAngle - endAngle;
+			} else {
+				sweep = - (360 - (startAngle - endAngle));
+			}
+		}
+		
+		return sweep;
 	}
 }
