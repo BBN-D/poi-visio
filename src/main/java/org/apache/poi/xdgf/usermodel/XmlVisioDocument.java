@@ -71,7 +71,9 @@ public class XmlVisioDocument extends POIXMLDocument {
 				_masters = (XDGFMasters)part;
 		}
 		
-		_masters.onDocumentRead();
+		if (_masters != null)
+			_masters.onDocumentRead();
+		
 		_pages.onDocumentRead();
 	}
 
