@@ -20,7 +20,7 @@ public class GeometryRowFactory {
 			_rowTypes.put("MoveTo", MoveTo.class, RowType.class);
 			_rowTypes.put("NURBSTo", NURBSTo.class, RowType.class);
 			_rowTypes.put("PolyLineTo", PolyLineTo.class, RowType.class);
-			_rowTypes.put("RelCubBezTo", MoveTo.class, RowType.class);
+			_rowTypes.put("RelCubBezTo", RelCubBezTo.class, RowType.class);
 			_rowTypes.put("RelEllipticalArcTo", RelEllipticalArcTo.class, RowType.class);
 			_rowTypes.put("RelLineTo", RelLineTo.class, RowType.class);
 			_rowTypes.put("RelMoveTo", RelMoveTo.class, RowType.class);
