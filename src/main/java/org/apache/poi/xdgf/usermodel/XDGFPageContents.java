@@ -33,7 +33,8 @@ public class XDGFPageContents extends XDGFBaseContents {
 			
 			for (POIXMLDocumentPart part: getRelations()) {
 				if (!(part instanceof XDGFMasterContents))
-					throw new POIXMLException("Unexpected page relation: " + part);
+					continue;
+					//throw new POIXMLException("Unexpected page relation: " + part);
 				
 				XDGFMaster master = ((XDGFMasterContents)part).getMaster();
 				_masters.put(master.getID(), master);
