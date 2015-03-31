@@ -20,6 +20,9 @@ public class ShapeDataAcceptor implements ShapeVisitorAcceptor {
 	@Override
 	public boolean accept(XDGFShape shape) {
 		
+		if (shape.isDeleted())
+			return false;
+		
 		// text is interesting
 		if (shape.hasText() && shape.getTextAsString().length() != 0)
 			return true;

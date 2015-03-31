@@ -325,6 +325,10 @@ public class XDGFShape extends XDGFSheet {
 		return getBeginX() != null;
 	}
 	
+	public boolean isDeleted() {
+		return getXmlObject().isSetDel() ? getXmlObject().getDel() : false;
+	}
+	
 	public XDGFText getText() {
 		if (_text == null && _masterShape != null)
 			return _masterShape.getText();

@@ -24,7 +24,7 @@ public abstract class ShapeVisitor{
 		return new ShapeVisitorAcceptor() {
 			@Override
 			public boolean accept(XDGFShape shape) {
-				return true;
+				return !shape.isDeleted();
 			}
 		};
 	}
