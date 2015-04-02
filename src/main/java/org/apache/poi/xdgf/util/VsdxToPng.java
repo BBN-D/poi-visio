@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2015 Raytheon BBN Technologies Corp. All rights reserved.
+ *
+ * Derived from code with the following license:
+ *
  *  ====================================================================
  *    Licensed to the Apache Software Foundation (ASF) under one or more
  *    contributor license agreements.  See the NOTICE file distributed with

@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Copyright (c) 2015 Raytheon BBN Technologies Corp. All rights reserved.
+#
 
 # basename it
 

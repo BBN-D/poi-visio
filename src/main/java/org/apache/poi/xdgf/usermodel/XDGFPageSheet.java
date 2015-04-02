@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Raytheon BBN Technologies Corp. All rights reserved.
+ */
+
 package org.apache.poi.xdgf.usermodel;
 
 import com.microsoft.schemas.office.visio.x2012.main.PageSheetType;

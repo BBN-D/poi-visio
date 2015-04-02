@@ -1,4 +1,7 @@
 /*
+ * Copyright (c) 2015 Raytheon BBN Technologies Corp. All rights reserved.
+ *
+ *
  * Copied from XWPFFactory.java, POI source code, Apache license
  */
 

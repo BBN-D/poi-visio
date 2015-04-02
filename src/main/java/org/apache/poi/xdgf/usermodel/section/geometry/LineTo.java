@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Raytheon BBN Technologies Corp. All rights reserved.
+ */
+
 package org.apache.poi.xdgf.usermodel.section.geometry;
 
 import org.apache.poi.POIXMLException;
