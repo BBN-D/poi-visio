@@ -321,6 +321,10 @@ public class XDGFShape extends XDGFSheet {
 		return _parent != null;
 	}
 	
+	public boolean hasShapes() {
+		return _shapes != null;
+	}
+	
 	public boolean isTopmost() {
 		return _parent == null;
 	}
@@ -802,17 +806,15 @@ public class XDGFShape extends XDGFSheet {
 	}
 	
 	/*
-	 * This is strictly true, however shapes that are like this are
-	 * typically groups of shapes
-	 * 
-	public boolean isVisible() {
+	 * Returns true if the shape has a drawable geometry associated with it
+	 */
+	public boolean hasGeometry() {
 		for (GeometrySection geoSection: getGeometrySections()) {
 			if (geoSection.getNoShow() == false)
 				return true;
 		}
 		return false;
 	}
-	*/
 	
 	/**
 	 * Returns a transform that can translate shape-local coordinates
