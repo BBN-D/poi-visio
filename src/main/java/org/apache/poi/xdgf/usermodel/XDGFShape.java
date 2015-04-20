@@ -11,6 +11,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -169,9 +170,25 @@ public class XDGFShape extends XDGFSheet {
 				throw XDGFException.error("refers to non-existant master " + obj.getMaster(),
 										  this);
 			
-			_masterShape = _master.getContent().getMasterShape();
-			if (_masterShape == null)
+			/*
+			 * If a master has one top-level shape, a shape that inherits from
+			 * that master inherits the descendant elements of that master
+			 * shape. If a master has more than one master shape, a shape that
+			 * inherits from that master inherits those master shapes as
+			 * subshapes.
+			 */
+			
+			Collection<XDGFShape> masterShapes = _master.getContent().getShapes();
+			
+			switch (masterShapes.size()) {
+			case 0:
 				throw XDGFException.error("Could not retrieve master shape from " + _master, this);
+			case 1:
+				_masterShape = masterShapes.iterator().next();
+				break;
+			default:
+				break;
+			}
 			
 		} else if (obj.isSetMasterShape()) {
 			_masterShape = master.getShapeById(obj.getMasterShape());

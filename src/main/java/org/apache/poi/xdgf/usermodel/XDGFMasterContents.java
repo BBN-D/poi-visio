@@ -34,9 +34,6 @@ public class XDGFMasterContents extends XDGFBaseContents {
 			}
 			
 			super.onDocumentRead();
-		
-			if (_toplevelShapes.size() != 1)
-				throw new POIXMLException("Did not expect that");
 			
 		} catch (POIXMLException e) {
 			throw XDGFException.wrap(this, e);
@@ -45,10 +42,6 @@ public class XDGFMasterContents extends XDGFBaseContents {
 
 	public XDGFMaster getMaster() {
 		return _master;
-	}
-	
-	public XDGFShape getMasterShape() {
-		return _toplevelShapes.iterator().next();
 	}
 
 	protected void setMaster(XDGFMaster master) {
