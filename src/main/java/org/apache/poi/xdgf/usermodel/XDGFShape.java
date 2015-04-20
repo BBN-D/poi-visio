@@ -178,7 +178,7 @@ public class XDGFShape extends XDGFSheet {
 			 * subshapes.
 			 */
 			
-			Collection<XDGFShape> masterShapes = _master.getContent().getShapes();
+			Collection<XDGFShape> masterShapes = _master.getContent().getTopLevelShapes();
 			
 			switch (masterShapes.size()) {
 			case 0:

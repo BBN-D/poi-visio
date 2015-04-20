@@ -112,6 +112,10 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
 		return _shapes.values();
 	}
 	
+	public List<XDGFShape> getTopLevelShapes() {
+		return Collections.unmodifiableList(_toplevelShapes);
+	}
+	
 	// get connections
 	public List<XDGFConnection> getConnections() {
 		return Collections.unmodifiableList(_connections);
