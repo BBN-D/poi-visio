@@ -98,13 +98,16 @@ public class XDGFText {
 		AffineTransform oldTr = graphics.getTransform();
 		
 		// visio is in flipped coordinates, so translate the text to be in the right place
-		if (!_parent.getFlipY()) {
+		Boolean flipX = _parent.getFlipX();
+		Boolean flipY = _parent.getFlipY();
+		
+		if (flipY == null || !_parent.getFlipY()) {
 			graphics.translate(bounds.x, bounds.y);
 			graphics.scale(1, -1);
 			graphics.translate(0, -bounds.height + graphics.getFontMetrics().getMaxCharBounds(graphics).getHeight());
 		}
 		
-		if (_parent.getFlipX()) {
+		if (flipX != null && _parent.getFlipX()) {
 			graphics.scale(-1, 1);
 			graphics.translate(-bounds.width, 0);
 		}
