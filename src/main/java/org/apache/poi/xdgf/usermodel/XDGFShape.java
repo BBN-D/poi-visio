@@ -22,6 +22,7 @@ import org.apache.poi.xdgf.usermodel.section.CombinedIterable;
 import org.apache.poi.xdgf.usermodel.section.GeometrySection;
 import org.apache.poi.xdgf.usermodel.section.XDGFSection;
 import org.apache.poi.xdgf.usermodel.shape.ShapeVisitor;
+import org.apache.poi.xdgf.usermodel.shape.exceptions.StopVisitingThisBranch;
 
 import com.microsoft.schemas.office.visio.x2012.main.ShapeSheetType;
 import com.microsoft.schemas.office.visio.x2012.main.TextType;
@@ -893,9 +894,36 @@ public class XDGFShape extends XDGFSheet {
 					shape.visitShapes(visitor, tr, level + 1);
 				}
 			}
-			
+		} catch (StopVisitingThisBranch e) {
+			// intentionally empty
 		} catch (POIXMLException e) {
 			throw XDGFException.wrap(this.toString(), e);
 		}
 	}
+	
+	/**
+     * The visitor will first visit this shape, then it's children. No transform 
+     * is calculated for this visit
+     * 
+     * This is useful because exceptions will be marked with the shapes as it
+     * propagates up the shape hierarchy.
+     */
+	public void visitShapes(ShapeVisitor visitor, int level) {
+	
+		try {
+			if (visitor.accept(this))
+				visitor.visit(this, null, level);
+			
+			if (_shapes != null) {
+				for (XDGFShape shape: _shapes) {
+					shape.visitShapes(visitor, level + 1);
+				}
+			}
+		} catch (StopVisitingThisBranch e) {
+			// intentionally empty
+		} catch (POIXMLException e) {
+			throw XDGFException.wrap(this.toString(), e);
+		}
+	}
+	
 }

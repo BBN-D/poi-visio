@@ -20,6 +20,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.poi.xdgf.usermodel.shape.ShapeRenderer;
 import org.apache.poi.xdgf.usermodel.shape.ShapeVisitor;
+import org.apache.poi.xdgf.usermodel.shape.exceptions.StopVisiting;
 import org.apache.poi.xdgf.xml.XDGFXMLDocumentPart;
 
 import com.microsoft.schemas.office.visio.x2012.main.ConnectType;
@@ -136,6 +137,8 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
 			for (XDGFShape shape: _toplevelShapes) {
 				shape.visitShapes(visitor, new AffineTransform(), 0);
 			}
+		} catch (StopVisiting e) {
+			// intentionally empty
 		} catch (POIXMLException e) {
 			throw XDGFException.wrap(this, e);
 		}

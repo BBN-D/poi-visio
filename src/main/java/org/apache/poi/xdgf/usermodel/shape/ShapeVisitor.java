@@ -13,6 +13,9 @@ import org.apache.poi.xdgf.usermodel.XDGFShape;
  * 
  * To change the behavior of a particular visitor, you can override either
  * accept() or getAcceptor() [preferred]
+ * 
+ * If accept() or visit() throw StopVisitingThisBranch, the iteration will
+ * not visit subshapes of the shape.
  */
 public abstract class ShapeVisitor{
 
