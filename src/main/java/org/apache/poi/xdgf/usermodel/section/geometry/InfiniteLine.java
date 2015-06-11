@@ -4,8 +4,15 @@
 
 package org.apache.poi.xdgf.usermodel.section.geometry;
 
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
 import org.apache.poi.POIXMLException;
+import org.apache.poi.xdgf.geom.Dimension2dDouble;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
+import org.apache.poi.xdgf.usermodel.XDGFDocument;
+import org.apache.poi.xdgf.usermodel.XDGFPage;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
 
 import com.microsoft.schemas.office.visio.x2012.main.CellType;
@@ -48,7 +55,7 @@ public class InfiniteLine implements GeometryRow {
 			} else if (cellName.equals("A")) {
 				a = XDGFCell.parseDoubleValue(cell);
 			} else if (cellName.equals("B")) {
-				a = XDGFCell.parseDoubleValue(cell);
+				b = XDGFCell.parseDoubleValue(cell);
 			} else {
 				throw new POIXMLException("Invalid cell '" + cellName + "' in InfiniteLine row");
 			}
@@ -92,5 +99,40 @@ public class InfiniteLine implements GeometryRow {
 		if (getDel()) return;
 		
 		throw new POIXMLException("InfiniteLine elements cannot be part of a path");
+	}
+	
+	// returns this object as a line that extends between the boundaries of
+	// the document
+	public Path2D.Double getPath() {
+		Path2D.Double path = new Path2D.Double();
+		
+		// this is a bit of a hack, but it works
+		double max_val = 100000;
+		
+		// compute slope..
+		double x0 = getX();
+		double y0 = getY();
+		double x1 = getA(); // second x
+		double y1 = getB(); // second y
+		
+		if (x0 == x1) {
+			path.moveTo(x0, -max_val);
+			path.lineTo(x0, max_val);
+		} else if (y0 == y1) {
+			path.moveTo(-max_val, y0);
+			path.lineTo(max_val, y0);
+		} else {
+
+			// normal case: compute slope/intercept
+			double m = (y1 - y0) / (x1 - x0);
+			double c = y0 - m*x0;
+			
+			// y = mx + c
+			
+			path.moveTo(max_val, m*max_val + c);
+			path.lineTo(max_val, (max_val - c)/m);
+		}
+		
+		return path;
 	}
 }

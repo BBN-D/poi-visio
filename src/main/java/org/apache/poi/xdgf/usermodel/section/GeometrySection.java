@@ -90,7 +90,7 @@ public class GeometrySection extends XDGFSection {
 		if (first instanceof Ellipse) {
 			return ((Ellipse)first).getPath();
 		} else if (first instanceof InfiniteLine) {
-			throw new POIXMLException("TODO");
+			return ((InfiniteLine)first).getPath();
 		} else if (first instanceof SplineStart) {
 			throw new POIXMLException("SplineStart must be preceded by another type");
 		} else {
