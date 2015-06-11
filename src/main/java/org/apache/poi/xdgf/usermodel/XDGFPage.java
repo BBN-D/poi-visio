@@ -4,6 +4,9 @@
 
 package org.apache.poi.xdgf.usermodel;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+
 import org.apache.poi.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.geom.Dimension2dDouble;
@@ -27,7 +30,7 @@ public class XDGFPage {
 		content.setPage(this);
 		
 		if (page.isSetPageSheet())
-			_pageSheet = new XDGFPageSheet(page.getPageSheet(),document);
+			_pageSheet = new XDGFPageSheet(page.getPageSheet(), document);
 	}
 	
 	@Internal
@@ -55,6 +58,7 @@ public class XDGFPage {
 		return _pages.getPageList().indexOf(this) + 1;
 	}
 	
+	// height/width of page
 	public Dimension2dDouble getPageSize() {
 		XDGFCell w = _pageSheet.getCell("PageWidth");
 		XDGFCell h = _pageSheet.getCell("PageHeight");
@@ -64,5 +68,33 @@ public class XDGFPage {
 		
 		return new Dimension2dDouble(Double.parseDouble(w.getValue()),
 									 Double.parseDouble(h.getValue()));
+	}
+	
+	// origin of coordinate system
+	public Point2D.Double getPageOffset() {
+		XDGFCell xoffcell = _pageSheet.getCell("XRulerOrigin");
+		XDGFCell yoffcell = _pageSheet.getCell("YRulerOrigin");
+		
+		double xoffset = 0;
+		double yoffset = 0;
+		
+		if (xoffcell != null)
+			xoffset = Double.parseDouble(xoffcell.getValue());
+		
+		if (xoffcell != null)
+			yoffset = Double.parseDouble(yoffcell.getValue());
+		
+		return new Point2D.Double(xoffset, yoffset);
+	}
+	
+	// bounding box of page
+	public Rectangle2D getBoundingBox() {
+		Dimension2dDouble sz = getPageSize();
+		Point2D.Double offset = getPageOffset();
+		
+		return new Rectangle2D.Double(-offset.getX(),
+									  -offset.getY(),
+									  sz.getWidth(),
+									  sz.getHeight());
 	}
 }
