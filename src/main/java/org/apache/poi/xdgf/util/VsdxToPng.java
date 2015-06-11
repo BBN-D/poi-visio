@@ -26,6 +26,7 @@ package org.apache.poi.xdgf.util;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +38,7 @@ import javax.imageio.ImageIO;
 import org.apache.poi.xdgf.geom.Dimension2dDouble;
 import org.apache.poi.xdgf.usermodel.XDGFPage;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
+import org.apache.poi.xdgf.usermodel.shape.ShapeDebuggerRenderer;
 import org.apache.poi.xdgf.usermodel.shape.ShapeRenderer;
 
 public class VsdxToPng {
@@ -58,7 +60,7 @@ public class VsdxToPng {
 	public static void renderToPng(XDGFPage page, File outFile, double scale, ShapeRenderer renderer) throws IOException {
 		
 		Dimension2dDouble sz = page.getPageSize();
-		System.out.println(sz);
+		
 		int width = (int)(scale * sz.getWidth());
 		int height = (int)(scale * sz.getHeight());
 		
@@ -100,15 +102,23 @@ public class VsdxToPng {
 	}
 	
 	public static void main(String [] args) throws Exception {
-		if (args.length != 2) {
-			System.err.println("Usage: in.vsdx outdir");
+		if (args.length > 2) {
+			System.err.println("Usage: [--debug] in.vsdx outdir");
 			System.exit(1);
 		}
+		
+		ShapeRenderer renderer = new ShapeRenderer();
 		
 		String inFilename = args[0];
 		String pngDir = args[1];
 		
+		if (args[0].equals("--debug")) {
+			inFilename = args[1];
+			pngDir = args[2];
+			renderer = new ShapeDebuggerRenderer();
+		}
+		
 		XmlVisioDocument doc = new XmlVisioDocument(new FileInputStream(inFilename));
-		renderToPng(doc, pngDir, 2000/11.0, new ShapeRenderer());
+		renderToPng(doc, pngDir, 2000/11.0, renderer);
 	}
 }
