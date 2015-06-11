@@ -1,12 +1,16 @@
 poi-visio
 =========
 
-This implementation of a visio parser is based on the POI java library. It can
-*only* handle the XML version of visio files (.vsdx), and not older XML or 
-proprietary formats (.vsd, .vsx).
+poi-visio is a Java library that loads Visio OOXML (vsdx) files and creates
+an in memory data structure that allows full access to the contents of the
+document. There is built-in support for easily traversing the content of the
+document in a structured way, and can render pages to simplified PNG files,
+or other backends supported by Java AWT. It is built using the Apache POI
+library which operates on other Microsoft OOXML documents (docx, pptx, xlsx).
+Currently the library only operates in read-only mode, but its design does
+not exclude being able to modify existing documents or creating new documents.
 
-Currently, this parser is read only, and cannot write new visio documents or
-modify existing documents.
+Currently, this library cannot handle older XML or proprietary formats (.vsd, .vsx).
 
 Dealing with visio files
 ========================
@@ -31,8 +35,27 @@ Developer mode
 
 Examining documents with Visio is very helpful in developer mode.
 
+Legal
+=====
 
-License
-=======
+This code has been approved by DARPA's Public Release Center for
+public release, with the following statement:
 
-License is currently Raytheon BBN Proprietary, TBD
+* Approved for Public Release, Distribution Unlimited
+
+Copyright & License
+-------------------
+
+Copyright (c) 2015 Raytheon BBN Technologies Corp
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

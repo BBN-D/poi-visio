@@ -4,7 +4,7 @@
   <artifactId>poi-visio</artifactId>
   <version>0.0.2-SNAPSHOT</version>
   <name>poi-visio</name>
-  <description>Java API to access Visio format files using Apache POI</description>
+  <description>Java API to access Visio .vsdx files using Apache POI</description>
   
   <build>
 		<plugins>
