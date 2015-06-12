@@ -808,6 +808,7 @@ public class XDGFShape extends XDGFSheet {
 	
 	// returns bounds as a path in local coordinates
 	// -> useful if you need to transform to global coordinates
+	// -> Don't use for 1d objects, fails for infinite line objects
 	public Path2D.Double getBoundsAsPath() {
 		
 		Double w = getWidth();
