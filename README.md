@@ -12,6 +12,22 @@ not exclude being able to modify existing documents or creating new documents.
 
 Currently, this library cannot handle older XML or proprietary formats (.vsd, .vsx).
 
+Building
+========
+
+Currently, this library requires a simple patch to the POI library, so you need
+to build our patched version of POI to use it. You can use the following steps
+to build and install our patched version of POI:
+
+    git clone https://github.com/BBN-D/poi.git
+    cd poi
+    git checkout bbn-fork
+    ant mvn-install
+
+Once this is done, you can build this project just like any other maven project:
+
+    mvn install
+
 Dealing with visio files
 ========================
 
