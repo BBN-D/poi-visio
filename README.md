@@ -1,3 +1,5 @@
+**NOTICE**: This code has been merged into the POI project as of version 3.14-beta-1, and you are encouraged to use that instead!
+
 poi-visio
 =========
 
